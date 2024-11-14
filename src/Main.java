@@ -6,11 +6,12 @@ public class Main {
         String url = "jdbc:mysql://localhost:3306/library_management";
         String username = "sarathi";
         String password = "root";
-        String query = "UPDATE members SET password = ? WHERE user_id = ?";
+        String query = "UPDATE library_staffs SET password = ? WHERE staff_id = ?";
         Connection connection = DriverManager.getConnection(url, username, password);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
+        System.out.println("connection established");
 
-        for (int i = 6; i <= 10; i++) {
+        for (int i = 100; i < 102; i++) {
             Scanner scanner = new Scanner(System.in);
             String passwor = scanner.nextLine();
             preparedStatement.setString(1, Integer.toString(passwor.hashCode()));
