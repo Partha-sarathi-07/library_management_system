@@ -10,7 +10,7 @@ public class Main {
         Connection connection = DriverManager.getConnection(url, username, password);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         System.out.println("connection established");
-
+        
         for (int i = 100; i < 102; i++) {
             Scanner scanner = new Scanner(System.in);
             String passwor = scanner.nextLine();
