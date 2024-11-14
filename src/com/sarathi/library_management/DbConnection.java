@@ -4,14 +4,23 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class CreateConnection {
-    public static void connection() {
+ public class DbConnection {
+
+    protected static Connection connection;
+
+    public static boolean createConnection() {
         try {
-            Connection connection = DriverManager.getConnection(System.getenv("DB_URL"), System.getenv("DB_USERNAME"), System.getenv("DB_PASSWORD"));
+            connection = DriverManager.getConnection(System.getenv("DB_URL"), System.getenv("DB_USERNAME"), System.getenv("DB_PASSWORD"));
         } catch (SQLException e) {
             System.out.println("Sorry for the inconvinience..");
             System.out.println("There is a little problem in our server");
             System.out.println("Thank you for your understanding");
+            return false;
         }
+        return true;
+    }
+
+    public static void closeConnection() throws SQLException {
+        connection.close();
     }
 }
