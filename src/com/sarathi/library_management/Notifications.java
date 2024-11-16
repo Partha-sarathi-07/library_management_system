@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class Notifications extends DbHandler {
 
     public static void displayWelcomeMsg(String email, boolean isStaff) throws SQLException {
-        String tableName = isStaff ? "library_staffs" : "members";
+        String tableName = isStaff ? "staffs" : "members";
         String name = "";
         String query = "SELECT name FROM " + tableName + " WHERE email = ?";
 

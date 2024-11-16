@@ -3,13 +3,14 @@ package com.sarathi.library_management;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class Validation extends DbHandler {
 
     private static PreparedStatement preparedStatement;
 
     public static boolean login(String email, String password, boolean isManagement) throws SQLException {
-        String tableName = isManagement ? "library_staffs" : "members";
+        String tableName = isManagement ? "staffs" : "members";
         String query = "SELECT COUNT(email) FROM " + tableName + " WHERE email = ? AND password = ?";
 
         preparedStatement = connection.prepareStatement(query);
@@ -21,7 +22,33 @@ public class Validation extends DbHandler {
         return resultSet.getInt(1) == 1;
     }
 
-    public static void signUp() {
-        System.out.println();
+    public static void signUp() throws SQLException{
+        Scanner scanner = new Scanner(System.in);
+        String contact = "";
+        String email = "";
+        String name = "";
+        String password = "";
+        System.out.print("\nEnter your email : ");
+        email = scanner.nextLine();
+        System.out.print("Enter your name : ");
+        name = scanner.nextLine();
+        while (contact.length() != 10) {
+            System.out.print("Enter your phone number : ");
+            contact = scanner.nextLine();
+        }
+
+        System.out.print("Enter your password : ");
+        password = scanner.nextLine();
+
+        String query = "INSERT INTO members VALUES (?, ?, ?, ?);";
+        preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        preparedStatement.setString(2, name);
+        preparedStatement.setString(3, contact);
+        preparedStatement.setString(4, String.valueOf(password.hashCode()));
+        preparedStatement.executeUpdate();
+        System.out.println("\nCongratulation!!!");
+        System.out.println("You have become an member!!!!");
+        System.out.println("Login to continue");
     }
 }
