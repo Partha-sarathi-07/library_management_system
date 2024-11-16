@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Validation extends DbConnection {
+public class Validation extends DbHandler {
 
     private static PreparedStatement preparedStatement;
 
@@ -19,5 +19,9 @@ public class Validation extends DbConnection {
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         return resultSet.getInt(1) == 1;
+    }
+
+    public static void signUp() {
+        System.out.println();
     }
 }

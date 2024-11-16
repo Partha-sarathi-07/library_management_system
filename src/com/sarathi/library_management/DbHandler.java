@@ -2,9 +2,10 @@ package com.sarathi.library_management;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
- public class DbConnection {
+ public class DbHandler {
 
     protected static Connection connection;
 
