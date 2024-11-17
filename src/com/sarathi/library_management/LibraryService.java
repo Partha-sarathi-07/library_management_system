@@ -39,7 +39,8 @@ public class LibraryService {
 ////                    int choice = scanner.nextInt();
 ////                    scanner.nextLine();
 ////                    switch (choice) {
-////                        1 -> staff.
+////                        1 -> staff.addBooks();
+////                        2 -> staff.removeBooks();
 ////                    }
 ////                }
 //
@@ -53,6 +54,10 @@ public class LibraryService {
 //            System.out.println("Username or password is incorrect");
 //        }
         Staff staff = new Staff();
-        staff.showBookDetail();
+        staff.removeBooks();
+        staff.showByTitle();
+//        SearchBooks searchBooks = new SearchBooks();
+//        searchBooks.showAllBooks();
+
     }
 }
