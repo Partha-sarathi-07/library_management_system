@@ -1,7 +1,6 @@
 package com.sarathi.library_management;
 
 import java.sql.SQLException;
-import java.util.Scanner;
 
 public class LibraryService {
 
@@ -53,11 +52,12 @@ public class LibraryService {
 //        else {
 //            System.out.println("Username or password is incorrect");
 //        }
-        Staff staff = new Staff();
-        staff.removeBooks();
-        staff.showByTitle();
+//        Member member = new Member();
+//        member.showAllBooks();
+//        new Staff().showNonAvailableBooks();
 //        SearchBooks searchBooks = new SearchBooks();
-//        searchBooks.showAllBooks();
+//        searchBooks.showAllBooks();4
 
+        DbHandler.closeConnection();
     }
 }

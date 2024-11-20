@@ -6,8 +6,13 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Staff extends SearchBooks implements Privileges {
+    private final String email;
     private final Scanner scanner = new Scanner(System.in);
     private PreparedStatement preparedStatement;
+
+    public Staff(String email) {
+        this.email = email;
+    }
 
     @Override
     public void showPrivileges() {
@@ -61,7 +66,9 @@ public class Staff extends SearchBooks implements Privileges {
             System.out.print("Enter the new copies : ");
             int copies = scanner.nextInt();
             scanner.nextLine();
-            String fetchQuery =  "SELECT book_id, available_copies FROM books WHERE title LIKE '%" + title + "%';";
+            String fetchQuery =  "SELECT book_id, available_copies " +
+                    "FROM books " +
+                    "WHERE title LIKE '%" + title + "%';";
             try {
                 preparedStatement = connection.prepareStatement(fetchQuery);
                 ResultSet resultSet = preparedStatement.executeQuery();
@@ -96,7 +103,7 @@ public class Staff extends SearchBooks implements Privileges {
 
         try {
             int available_copies = showByTitle(title).getInt(5);
-            System.out.print("Enter the number of copies of book you want to remove : ");
+            System.out.print("\nEnter the number of copies of book you want to remove : ");
             int remove_copies = scanner.nextInt();
             scanner.nextLine();
             if (remove_copies > available_copies)
@@ -108,7 +115,8 @@ public class Staff extends SearchBooks implements Privileges {
                 System.out.println("The book has been removed successfully...!!!!");
             }
             else {
-                String removeQuery = "UPDATE books SET available_copies = ? WHERE title LIKE '%" + title + "%';";
+                String removeQuery = "UPDATE books SET available_copies = ? " +
+                        "WHERE title LIKE '%" + title + "%';";
                 preparedStatement = connection.prepareStatement(removeQuery);
                 preparedStatement.setInt(1, available_copies - remove_copies);
                 preparedStatement.executeUpdate();
@@ -116,6 +124,57 @@ public class Staff extends SearchBooks implements Privileges {
             }
         } catch (SQLException e) {
             System.out.println("Enter the valid number of copies to remove....");
+        }
+    }
+
+    public void showAllMembers() {
+        String fetchQuery = "SELECT * FROM members";
+        try {
+            preparedStatement = connection.prepareStatement(fetchQuery);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                System.out.printf("\nemail = %s, name = %s, phone_number = %s\n", resultSet.getString(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
+            }
+        } catch (SQLException e) {
+            System.out.println("There is a little problem in our side...");
+            System.out.println("Please view the members after a while");
+        }
+    }
+
+    public void showNonAvailableBooks() {
+        String fetchQuery = "SELECT book_id, title, author, genre " +
+                "FROM books " +
+                "WHERE available_copies = 0;";
+        try {
+            preparedStatement = connection.prepareStatement(fetchQuery);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                System.out.printf("Book id = %d, Title = %s, Author = %s, Genre = %s", resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Unable to fetch the books..");
+            System.out.println("Please try after a while");
+        }
+    }
+
+    public void showUsersAndBorrowedBooks() {
+        String fetchQuery = "SELECT members.email, members.name, books.book_id, books.title " +
+                            "FROM members JOIN books_tracker " +
+                            "ON members.email = books_tracker.email " +
+                            "JOIN books " +
+                            "ON books_tracker.book_id = books.book_id";
+        try {
+            preparedStatement = connection.prepareStatement(fetchQuery);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                System.out.printf("\nEmail = %s, Name = %s, Book Id = %d, Title = %s", resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4));
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Kindly check after a while.....");
+            System.out.println("Thank you for your understanding!!!");
         }
     }
 }
