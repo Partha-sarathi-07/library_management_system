@@ -23,7 +23,6 @@ public class Staff extends User implements Privileges {
         System.out.println("8. Exit\n");
     }
 
-
     public void addBooks() {
 
         System.out.println();
@@ -41,7 +40,7 @@ public class Staff extends User implements Privileges {
                 System.out.print("Enter the author of the book : ");
                 String author = scanner.nextLine();
                 System.out.print("Enter the book genre : ");
-                String genre = scanner.nextLine();
+                String genre = selectGenre();
                 System.out.print("Enter the number of book : ");
                 int count = scanner.nextInt();
                 scanner.nextLine();
@@ -96,11 +95,11 @@ public class Staff extends User implements Privileges {
 
     public void removeBooks() {
         System.out.println();
-        System.out.print("Enter the title of the book : ");
+        System.out.print("Enter the Correct title of the book : ");
         String title = scanner.nextLine();
 
         try {
-            int available_copies = searchByTitle(title).getInt(5);
+            int available_copies = calculateAvailableCopies(title);
             System.out.print("\nEnter the number of copies of book you want to remove : ");
             int remove_copies = scanner.nextInt();
             scanner.nextLine();
@@ -126,6 +125,20 @@ public class Staff extends User implements Privileges {
         System.out.print("Do you want to remove another book ? (yes / no) : ");
         if (scanner.nextLine().equalsIgnoreCase("yes"))
             removeBooks();
+    }
+
+    private int calculateAvailableCopies(String title) {
+        String fetchQuery = "SELECT available_copies FROM books WHERE title LIKE '%" + title + "%'";
+        try {
+            preparedStatement = connection.prepareStatement(fetchQuery);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+                return resultSet.getInt(1);
+        }
+        catch (SQLException e) {
+            System.out.println("Unable to calculate availabe copies.. Please try after a while....");
+        }
+        return 0;
     }
 
     public void showAllMembers() {

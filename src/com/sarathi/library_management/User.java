@@ -71,6 +71,7 @@ public class User extends DbHandler {
                 case 6 -> "romance";
                 default -> "none";
             };
+            scanner.nextLine();
 
             if (!genre.equalsIgnoreCase("none"))
                 return genre;
@@ -92,22 +93,6 @@ public class User extends DbHandler {
         } catch (SQLException e) {
             System.out.println("The searched book is not available");
         }
-    }
-
-    public ResultSet searchByTitle(String title) {
-
-        String fetchQuery = "SELECT * FROM books " +
-                "WHERE title LIKE '%" + title + "%'";
-        try {
-            preparedStatement = connection.prepareStatement(fetchQuery);
-            resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            System.out.printf("\nBook id = %d, Title = %s, Author = %s, Genre = %s, Available copies = %d", resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4), resultSet.getInt(5));
-            System.out.println();
-        } catch (SQLException e) {
-            System.out.println("The searched book is not available");
-        }
-        return resultSet;
     }
 
     public void searchByAuthor() {
