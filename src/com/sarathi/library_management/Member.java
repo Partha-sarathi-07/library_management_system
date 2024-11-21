@@ -19,10 +19,12 @@ public class Member extends User implements Privileges{
 
     @Override
     public void showPrivileges() {
-        System.out.println("1. View Available Books");
+        System.out.println("\n1. View Available Books");
         System.out.println("2. Search Books");
         System.out.println("3. Borrow Books");
         System.out.println("4. Return Books");
+        System.out.println("5. Pay Fine");
+        System.out.println("6. Exit\n");
     }
 
     @Override
@@ -34,8 +36,9 @@ public class Member extends User implements Privileges{
             preparedStatement = connection.prepareStatement(fetchQuery);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                System.out.printf("\nBook id = %d, title = %s, author = %s, genre = %s\n", resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
+                System.out.printf("\nBook id = %d, title = %s, author = %s, genre = %s", resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
             }
+            System.out.println();
         }
         catch (SQLException e) {
             System.out.println("Please try after a while unable to show all the books");
@@ -131,7 +134,7 @@ public class Member extends User implements Privileges{
         catch (SQLException e) {
             System.out.println("hiii");
         }
-        System.out.println("Do you want to take another book ?(yes / no) : ");
+        System.out.print("Do you want to take another book ?(yes / no) : ");
         if (scanner.nextLine().equalsIgnoreCase("yes"))
             borrowBooks();
     }

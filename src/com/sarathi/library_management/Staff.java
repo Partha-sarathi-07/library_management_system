@@ -1,5 +1,7 @@
 package com.sarathi.library_management;
 
+import org.w3c.dom.ls.LSOutput;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,18 +18,20 @@ public class Staff extends User implements Privileges {
 
     @Override
     public void showPrivileges() {
-        System.out.println("1. Add Books");
+        System.out.println("\n1. Add Books");
         System.out.println("2. Remove Books");
         System.out.println("3. Show All Books");
-        System.out.println("4. Show Currently Available Books");
-        System.out.println("5. Show Book Copies Available");
-        System.out.println("6. Show Non Available Books");
-        System.out.println("7. Show Books Not Returned Members");
+        System.out.println("4. Show Book Search Options");
+        System.out.println("5. Show Non Available Books");
+        System.out.println("6. Show All Members");
+        System.out.println("7. Show Members and Books Taken By Them");
+        System.out.println("8. Exit\n");
     }
 
 
     public void addBooks() {
 
+        System.out.println();
         System.out.print("Do you want to add a new book \"(yes)\" or increase the copies of available book \"(no)\"  or \"(exit)\" to exit : ");
         String choice = scanner.nextLine().toLowerCase();
 
@@ -96,13 +100,13 @@ public class Staff extends User implements Privileges {
             addBooks();
     }
 
-
     public void removeBooks() {
+        System.out.println();
         System.out.print("Enter the title of the book : ");
         String title = scanner.nextLine();
 
         try {
-            int available_copies = showByTitle(title).getInt(5);
+            int available_copies = searchByTitle(title).getInt(5);
             System.out.print("\nEnter the number of copies of book you want to remove : ");
             int remove_copies = scanner.nextInt();
             scanner.nextLine();
@@ -125,6 +129,9 @@ public class Staff extends User implements Privileges {
         } catch (SQLException e) {
             System.out.println("Enter the valid number of copies to remove....");
         }
+        System.out.print("Do you want to remove another book ? (yes / no) : ");
+        if (scanner.nextLine().equalsIgnoreCase("yes"))
+            removeBooks();
     }
 
     public void showAllMembers() {
@@ -133,8 +140,9 @@ public class Staff extends User implements Privileges {
             preparedStatement = connection.prepareStatement(fetchQuery);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                System.out.printf("\nemail = %s, name = %s, phone_number = %s\n", resultSet.getString(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
+                System.out.printf("\nemail = %s, name = %s, phone_number = %s", resultSet.getString(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
             }
+            System.out.println();
         } catch (SQLException e) {
             System.out.println("There is a little problem in our side...");
             System.out.println("Please view the members after a while");
@@ -159,7 +167,7 @@ public class Staff extends User implements Privileges {
         }
     }
 
-    public void showUsersAndBorrowedBooks() {
+    public void showMembersAndBorrowedBooks() {
         String fetchQuery = "SELECT members.email, members.name, books.book_id, books.title " +
                             "FROM members JOIN books_tracker " +
                             "ON members.email = books_tracker.email " +
@@ -171,6 +179,7 @@ public class Staff extends User implements Privileges {
             while (resultSet.next()) {
                 System.out.printf("\nEmail = %s, Name = %s, Book Id = %d, Title = %s", resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4));
             }
+            System.out.println();
         }
         catch (Exception e) {
             System.out.println("Kindly check after a while.....");
