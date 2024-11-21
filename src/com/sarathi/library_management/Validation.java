@@ -9,20 +9,29 @@ public class Validation extends DbHandler {
 
     private static PreparedStatement preparedStatement;
 
-    public static boolean login(String email, String password, boolean isManagement) throws SQLException {
+    public static boolean login(String email, String password, boolean isManagement) {
         String tableName = isManagement ? "staffs" : "members";
         String query = "SELECT COUNT(email) FROM " + tableName + " WHERE email = ? AND password = ?";
 
-        preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, email);
-        preparedStatement.setString(2, String.valueOf(password.hashCode()));
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, String.valueOf(password.hashCode()));
 
-        ResultSet resultSet = preparedStatement.executeQuery();
-        resultSet.next();
-        return resultSet.getInt(1) == 1;
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            if (resultSet.getInt(1) == 1)
+                return true;
+            throw new SQLException();
+
+        }
+        catch (SQLException e) {
+            System.out.println("\nUsername or Password is incorrect");
+            return false;
+        }
     }
 
-    public static void signUp() throws SQLException{
+    public static void signUp() {
         Scanner scanner = new Scanner(System.in);
         String contact = "";
         String email = "";
@@ -41,12 +50,18 @@ public class Validation extends DbHandler {
         password = scanner.nextLine();
 
         String query = "INSERT INTO members VALUES (?, ?, ?, ?);";
-        preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, email);
-        preparedStatement.setString(2, name);
-        preparedStatement.setString(3, contact);
-        preparedStatement.setString(4, String.valueOf(password.hashCode()));
-        preparedStatement.executeUpdate();
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, contact);
+            preparedStatement.setString(4, String.valueOf(password.hashCode()));
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException e) {
+            System.out.println("Unable to sign in.. Please try after a while");
+        }
+
         System.out.println("\nCongratulation!!!");
         System.out.println("You have become an member!!!!");
         System.out.println("Login to continue");

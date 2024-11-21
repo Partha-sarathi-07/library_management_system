@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class Staff extends SearchBooks implements Privileges {
+public class Staff extends User implements Privileges {
     private final String email;
     private final Scanner scanner = new Scanner(System.in);
     private PreparedStatement preparedStatement;

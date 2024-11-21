@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class Member extends SearchBooks implements Privileges{
+public class Member extends User implements Privileges{
 
     private final String email;
     private PreparedStatement preparedStatement;
@@ -84,7 +84,7 @@ public class Member extends SearchBooks implements Privileges{
             System.out.println("You have taken maximum number of books, Return the books to take other books......");
             return;
         }
-        System.out.print("Enter the name of the Book you want to borrow : ");
+        System.out.print("\nEnter the name of the Book you want to borrow : ");
         String title = scanner.nextLine();
         String checkQuery = "SELECT book_id, available_copies " +
                 "FROM books " +
@@ -139,6 +139,8 @@ public class Member extends SearchBooks implements Privileges{
     public void returnBooks() {
         System.out.print("Enter the book id you wanna return : ");
         int bookId = scanner.nextInt();
+        Fine fine = new Fine(this.email);
+        int fineAmount = fine.calculateFine(bookId);
         String removeQuery = "DELETE FROM books_tracker WHERE email = ? AND book_id = ?;";
         try {
             preparedStatement = connection.prepareStatement(removeQuery);
@@ -152,6 +154,7 @@ public class Member extends SearchBooks implements Privileges{
                 preparedStatement = connection.prepareStatement(bookCopyIncrease);
                 preparedStatement.setInt(1, bookId);
                 preparedStatement.executeUpdate();
+                fine.payFine();
             }
             else {
                 System.out.println("Please enter the correct book_id");
@@ -162,7 +165,10 @@ public class Member extends SearchBooks implements Privileges{
             System.out.println("Sorry!!!! little problem in our server....");
             System.out.println("Please return the book after a while....");
         }
+    }
 
+    public void payFine() {
+        new Fine(this.email).payFine();
     }
 
 }

@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class SearchBooks extends DbHandler {
+public class User extends DbHandler {
     private final Scanner scanner = new Scanner(System.in);
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
