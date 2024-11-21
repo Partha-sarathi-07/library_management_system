@@ -49,9 +49,10 @@ public class Member extends User implements Privileges{
     public void searchByGenre() {
         String genre = selectGenre();
         String fetchQuery = "SELECT * FROM books " +
-                "WHERE genre LIKE '%" + genre + "%'";
+                "WHERE available_copies > 0 AND genre = ?";
         try {
             preparedStatement = connection.prepareStatement(fetchQuery);
+            preparedStatement.setString(1, genre);
             ResultSet resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 System.out.printf("\nBook id = %d, Title = %s, Author = %s", resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3));
