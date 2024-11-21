@@ -9,8 +9,8 @@ public class Validation extends DbHandler {
 
     private static PreparedStatement preparedStatement;
 
-    public static boolean login(String email, String password, boolean isManagement) {
-        String tableName = isManagement ? "staffs" : "members";
+    public static boolean login(String email, String password, boolean isStaff) {
+        String tableName = isStaff ? "staffs" : "members";
         String query = "SELECT COUNT(email) FROM " + tableName + " WHERE email = ? AND password = ?";
 
         try {
