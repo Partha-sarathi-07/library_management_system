@@ -20,7 +20,12 @@ import java.sql.SQLException;
         return true;
     }
 
-    public static void closeConnection() throws SQLException {
-        connection.close();
+    public static void closeConnection() {
+        try {
+            connection.close();
+        }
+        catch (SQLException e) {
+            System.out.println("Create The connection first");
+        }
     }
 }

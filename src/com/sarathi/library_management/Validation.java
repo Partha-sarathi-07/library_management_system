@@ -33,14 +33,15 @@ public class Validation extends DbHandler {
 
     public static void signUp() {
         Scanner scanner = new Scanner(System.in);
-        String contact = "";
-        String email = "";
-        String name = "";
-        String password = "";
+        String contact;
+        String email;
+        String name;
+        String password;
         System.out.print("\nEnter your email : ");
         email = scanner.nextLine();
         System.out.print("Enter your name : ");
         name = scanner.nextLine();
+        contact = scanner.nextLine();
         while (contact.length() != 10) {
             System.out.print("Enter your phone number : ");
             contact = scanner.nextLine();

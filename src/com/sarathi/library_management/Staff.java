@@ -1,6 +1,5 @@
 package com.sarathi.library_management;
 
-import org.w3c.dom.ls.LSOutput;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,20 +7,16 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Staff extends User implements Privileges {
-    private final String email;
     private final Scanner scanner = new Scanner(System.in);
     private PreparedStatement preparedStatement;
 
-    public Staff(String email) {
-        this.email = email;
-    }
 
     @Override
     public void showPrivileges() {
         System.out.println("\n1. Add Books");
         System.out.println("2. Remove Books");
         System.out.println("3. Show All Books");
-        System.out.println("4. Show Book Search Options");
+        System.out.println("4. Search Books");
         System.out.println("5. Show Non Available Books");
         System.out.println("6. Show All Members");
         System.out.println("7. Show Members and Books Taken By Them");
@@ -35,64 +30,63 @@ public class Staff extends User implements Privileges {
         System.out.print("Do you want to add a new book \"(yes)\" or increase the copies of available book \"(no)\"  or \"(exit)\" to exit : ");
         String choice = scanner.nextLine().toLowerCase();
 
-        if (choice.equals("exit"))
-            return;
-
-        else if (choice.equals("yes")) {
-
-            System.out.print("\nEnter the title of the book : ");
-            String title = scanner.nextLine();
-            System.out.print("Enter the author of the book : ");
-            String author = scanner.nextLine();
-            System.out.print("Enter the book genre : ");
-            String genre = scanner.nextLine();
-            System.out.print("Enter the number of book : ");
-            int count = scanner.nextInt();
-            scanner.nextLine();
-
-            String addQuery = "INSERT INTO books (title, author, genre, available_copies) VALUES (?, ?, ?, ?)";
-            try {
-                preparedStatement = connection.prepareStatement(addQuery);
-                preparedStatement.setString(1, title);
-                preparedStatement.setString(2, author);
-                preparedStatement.setString(3, genre);
-                preparedStatement.setInt(4, count);
-                preparedStatement.executeUpdate();
-                System.out.println("The book has been added successfull hurray!!!!");
-            } catch (SQLException e) {
-                System.out.println("Please try adding the books after a while");
+        switch (choice) {
+            case "exit" -> {
+                return;
             }
+            case "yes" -> {
 
-        }
-        else if (choice.equals("no")) {
-            System.out.print("\nEnter the book title : ");
-            String title = scanner.nextLine();
-            System.out.print("Enter the new copies : ");
-            int copies = scanner.nextInt();
-            scanner.nextLine();
-            String fetchQuery =  "SELECT book_id, available_copies " +
-                    "FROM books " +
-                    "WHERE title LIKE '%" + title + "%';";
-            try {
-                preparedStatement = connection.prepareStatement(fetchQuery);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                resultSet.next();
-                int book_id = resultSet.getInt(1);
-                copies += resultSet.getInt(2);
-                String updateQuery = "UPDATE books SET available_copies = ? WHERE book_id = ?;";
-                preparedStatement = connection.prepareStatement(updateQuery);
-                preparedStatement.setInt(1, copies);
-                preparedStatement.setInt(2, book_id);
-                preparedStatement.executeUpdate();
-                System.out.println("Number of copies has been increased successfully......");
-            }
-            catch (SQLException e) {
-                System.out.println("Please enter Valid book name");
-            }
+                System.out.print("\nEnter the title of the book : ");
+                String title = scanner.nextLine();
+                System.out.print("Enter the author of the book : ");
+                String author = scanner.nextLine();
+                System.out.print("Enter the book genre : ");
+                String genre = scanner.nextLine();
+                System.out.print("Enter the number of book : ");
+                int count = scanner.nextInt();
+                scanner.nextLine();
 
-        }
-        else {
-            System.out.println("Please enter an valid option...");
+                String addQuery = "INSERT INTO books (title, author, genre, available_copies) VALUES (?, ?, ?, ?)";
+                try {
+                    preparedStatement = connection.prepareStatement(addQuery);
+                    preparedStatement.setString(1, title);
+                    preparedStatement.setString(2, author);
+                    preparedStatement.setString(3, genre);
+                    preparedStatement.setInt(4, count);
+                    preparedStatement.executeUpdate();
+                    System.out.println("The book has been added successfull hurray!!!!");
+                } catch (SQLException e) {
+                    System.out.println("Please try adding the books after a while");
+                }
+
+            }
+            case "no" -> {
+                System.out.print("\nEnter the book title : ");
+                String title = scanner.nextLine();
+                System.out.print("Enter the new copies : ");
+                int copies = scanner.nextInt();
+                scanner.nextLine();
+                String fetchQuery = "SELECT book_id, available_copies " +
+                        "FROM books " +
+                        "WHERE title LIKE '%" + title + "%';";
+                try {
+                    preparedStatement = connection.prepareStatement(fetchQuery);
+                    ResultSet resultSet = preparedStatement.executeQuery();
+                    resultSet.next();
+                    int book_id = resultSet.getInt(1);
+                    copies += resultSet.getInt(2);
+                    String updateQuery = "UPDATE books SET available_copies = ? WHERE book_id = ?;";
+                    preparedStatement = connection.prepareStatement(updateQuery);
+                    preparedStatement.setInt(1, copies);
+                    preparedStatement.setInt(2, book_id);
+                    preparedStatement.executeUpdate();
+                    System.out.println("Number of copies has been increased successfully......");
+                } catch (SQLException e) {
+                    System.out.println("Please enter Valid book name");
+                }
+
+            }
+            default -> System.out.println("Please enter an valid option...");
         }
 
         System.out.print("\nDo you wish to add more books (yes / no) : ");
@@ -140,7 +134,7 @@ public class Staff extends User implements Privileges {
             preparedStatement = connection.prepareStatement(fetchQuery);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                System.out.printf("\nemail = %s, name = %s, phone_number = %s", resultSet.getString(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
+                System.out.printf("\nemail = %s, name = %s, phone_number = %s", resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
             }
             System.out.println();
         } catch (SQLException e) {

@@ -17,7 +17,7 @@ public class Fine extends DbHandler{
         System.out.println("If you don't return the books within the due date then every day One Rupee will be fined");
     }
 
-    public int calculateFine(int bookId) {
+    public void calculateFine(int bookId) {
         String dateDiffQuery = "SELECT DATEDIFF(current_date, due_date) " +
                 "FROM books_tracker " +
                 "WHERE book_id = ? AND email = ?;";
@@ -28,25 +28,23 @@ public class Fine extends DbHandler{
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next() && resultSet.getInt(1) > 0) {
                 int fine =  resultSet.getInt(1);
-                updateFineInDb(email, fine);
-                return fine;
+                updateFineInDb(fine);
             }
         }
         catch (SQLException e) {
             System.out.println("Sorry unable to see the fine.....");
         }
-        return 0;
     }
 
-    public void updateFineInDb(String email, int fine) {
-        int existingFine = fineAlreadyPresentInDb();
+    public void updateFineInDb(int fine) {
+        int existingFine = checkIfAlreadyFined();
         if (existingFine > 0)
             updateExistingFine(fine);
         else
             createNewFineRecord(fine);
     }
 
-    public int fineAlreadyPresentInDb() {
+    public int checkIfAlreadyFined() {
         String checkQuery = "SELECT fine FROM fine_tracker WHERE email = ?;";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(checkQuery);
@@ -127,7 +125,6 @@ public class Fine extends DbHandler{
             else {
                 updateFineAfterPayment(fine);
             }
-
         }
         else {
             System.out.println("Try to pay your fine as soon as possible bro..");

@@ -45,6 +45,23 @@ public class Member extends User implements Privileges{
         }
     }
 
+    @Override
+    public void searchByGenre() {
+        String genre = selectGenre();
+        String fetchQuery = "SELECT * FROM books " +
+                "WHERE genre LIKE '%" + genre + "%'";
+        try {
+            preparedStatement = connection.prepareStatement(fetchQuery);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()) {
+                System.out.printf("\nBook id = %d, Title = %s, Author = %s", resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3));
+            }
+            System.out.println();
+        } catch (SQLException e) {
+            System.out.println("Sorry unable to retrive the books");
+            System.out.println("Please try after a while....");
+        }    }
+
     public int showBorrowedBooksCount() {
         String query = "SELECT COUNT(email) " +
                 "FROM books_tracker " +
@@ -58,26 +75,6 @@ public class Member extends User implements Privileges{
         }
         catch (SQLException e) {
             return 0;
-        }
-    }
-
-    public void showBorrowedBooks() {
-        String showBorrowBookquery = "SELECT books.book_id, books.title, books.author, books.genre " +
-                "FROM books JOIN books_tracker " +
-                "ON books.book_id = books_tracker.book_id " +
-                "WHERE email = ?";
-        try {
-            preparedStatement = connection.prepareStatement(showBorrowBookquery);
-            preparedStatement.setString(1, this.email);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                System.out.printf("\nBook id = %d, title = %s, Author = %s, Genre = %s", resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
-            }
-        }
-        catch (SQLException e) {
-            System.out.println("Unable to show the borrowed books...");
-            System.out.println("Kindly try after a while...");
         }
     }
 
@@ -119,6 +116,7 @@ public class Member extends User implements Privileges{
 
                 if (preparedStatement.executeUpdate() == 1) {
                     System.out.println("Now you can take " + title + " book to home");
+                    Fine.showFineDetails();
                     System.out.println("You must return the book within " + dueDate);
                     String reduceCopyQuery = "UPDATE books set available_copies = available_copies - 1 WHERE book_id = ?";
                     preparedStatement = connection.prepareStatement(reduceCopyQuery);
@@ -142,8 +140,9 @@ public class Member extends User implements Privileges{
     public void returnBooks() {
         System.out.print("Enter the book id you wanna return : ");
         int bookId = scanner.nextInt();
+        scanner.nextLine();
         Fine fine = new Fine(this.email);
-        int fineAmount = fine.calculateFine(bookId);
+        fine.calculateFine(bookId);
         String removeQuery = "DELETE FROM books_tracker WHERE email = ? AND book_id = ?;";
         try {
             preparedStatement = connection.prepareStatement(removeQuery);

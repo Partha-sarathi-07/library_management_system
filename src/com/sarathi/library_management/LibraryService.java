@@ -1,23 +1,21 @@
 package com.sarathi.library_management;
 
-import java.sql.SQLException;
 import java.util.Scanner;
 
 public class LibraryService {
 
     private final static Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         if (!DbHandler.createConnection()) return;
 
         System.out.println("Hello!!! Welcome to Sarathi Library");
         Pair userDetail = doSignUpOrLogin();
-        System.out.println("\nHurray!!!! You have logged in successfully");
-
         String email = userDetail.email;
         boolean isStaff = userDetail.isStaff;
+        Notifications.displayWelcomeMsg(email, isStaff);
         if (isStaff) {
-            Staff staff = new Staff(email);
+            Staff staff = new Staff();
             outerLoop : while (true) {
                 staff.showPrivileges();
                 System.out.print("Select your option (1 / 2 / 3 / 4 / 5 / 6 / 7 / 8) : ");
@@ -58,16 +56,15 @@ public class LibraryService {
                 }
             }
         }
-
-
-
+        Notifications.displayThankYouMsg();
+        DbHandler.closeConnection();
 
     }
 
     public static Pair doSignUpOrLogin() {
 
-        String email = "";
-        boolean isStaff = false;
+        String email;
+        boolean isStaff;
 
         while (true) {
             System.out.print("\nSign Up(1) / Login (2) : ");
