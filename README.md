@@ -1,158 +1,161 @@
-Simple Library Management System
---------------------------------
+# Simple Library Management System
 
-programming language - java, mysql
-connecting to database via JDBC
+### Programming Language
+- **Java**
+- **MySQL**
 
-Database name - library_management
+### Database Connectivity
+- **JDBC**
 
-+------------------------------+
-| Tables_in_library_management |
-+------------------------------+
-| books                        |
-| books_tracker                |
-| fine_tracker                 |
-| members                      |
-| staffs                       |
-+------------------------------+
+### Database Name
+`library_management`
 
+### Tables in `library_management`
+- `books`
+- `books_tracker`
+- `fine_tracker`
+- `members`
+- `staffs`
 
-**Books table** 
-+------------------+-------------+------+-----+---------+----------------+
+---
+
+## **Tables Structure**
+
+### Books Table
 | Field            | Type        | Null | Key | Default | Extra          |
-+------------------+-------------+------+-----+---------+----------------+
+|------------------|-------------|------|-----|---------|----------------|
 | book_id          | int         | NO   | PRI | NULL    | auto_increment |
 | title            | varchar(50) | YES  |     | NULL    |                |
 | author           | varchar(20) | YES  |     | NULL    |                |
 | genre            | varchar(20) | YES  |     | NULL    |                |
 | available_copies | int         | YES  |     | NULL    |                |
-+------------------+-------------+------+-----+---------+----------------+
 
+---
 
-**Books Tracker Table**
-
-+---------------+-------------+------+-----+---------+-------+
+### Books Tracker Table
 | Field         | Type        | Null | Key | Default | Extra |
-+---------------+-------------+------+-----+---------+-------+
+|---------------|-------------|------|-----|---------|-------|
 | email         | varchar(40) | YES  | MUL | NULL    |       |
 | book_id       | int         | YES  | MUL | NULL    |       |
 | borrowed_date | date        | YES  |     | NULL    |       |
 | due_date      | date        | YES  |     | NULL    |       |
-+---------------+-------------+------+-----+---------+-------+
 
+---
 
-**Fine Tracker Table**
-
-+-------+-------------+------+-----+---------+-------+
+### Fine Tracker Table
 | Field | Type        | Null | Key | Default | Extra |
-+-------+-------------+------+-----+---------+-------+
+|-------|-------------|------|-----|---------|-------|
 | email | varchar(40) | YES  | MUL | NULL    |       |
 | fine  | int         | YES  |     | NULL    |       |
-+-------+-------------+------+-----+---------+-------+
 
+---
 
-**Members table**
-
-+--------------+-------------+------+-----+---------+-------+
+### Members Table
 | Field        | Type        | Null | Key | Default | Extra |
-+--------------+-------------+------+-----+---------+-------+
+|--------------|-------------|------|-----|---------|-------|
 | email        | varchar(40) | NO   | PRI | NULL    |       |
 | name         | varchar(20) | YES  |     | NULL    |       |
 | Phone_number | varchar(10) | YES  |     | NULL    |       |
 | password     | varchar(20) | YES  |     | NULL    |       |
-+--------------+-------------+------+-----+---------+-------+
 
+---
 
-**Staffs Table**
-
-+----------+-------------+------+-----+---------+-------+
+### Staffs Table
 | Field    | Type        | Null | Key | Default | Extra |
-+----------+-------------+------+-----+---------+-------+
+|----------|-------------|------|-----|---------|-------|
 | email    | varchar(40) | NO   | PRI | NULL    |       |
 | name     | varchar(20) | YES  |     | NULL    |       |
 | password | varchar(20) | YES  |     | NULL    |       |
-+----------+-------------+------+-----+---------+-------+
 
+---
 
+## **Classes and Interfaces**
 
-**INTERFACE, CLASSES AND METHODS**
+### DbHandler
+- **Variables**
+  - `protected static Connection connection;`
+- **Methods**
+  - `public static boolean createConnection()` - Creates connection with the database.
+  - `public static void closeConnection()` - Terminates connection with the database.
 
+---
 
+### Validation (inherits `DbHandler`)
+- **Methods**
+  - `public static boolean login(email, password, staffOrNot)` - Validates and logs in the user.
+  - `public static void signUp()` - Allows only members to sign up, assuming staff are assigned separately.
 
-DbHandler 
+---
 
-   protected static Connection connection;
-   public static boolean createConnection() -> Creates connection with the dataBase
-   public static void closeConnection() -> Terminates connection with the dataBase
+### Interface: Privileges
+- **Methods**
+  - `void showPrivileges()` - Displays privileges for members or staff.
 
+---
 
-Validation inherit DbHandler
+### Notifications (inherits `DbHandler`)
+- **Variables**
+  - `private static String name;`
+- **Methods**
+  - `public static void displayWelcomeMsg(email, isStaff)` - Displays a welcome message.
+  - `public static void displayThankYouMsg()` - Displays a goodbye message.
 
-   public static boolean login(email, password, staffOrNot) -> Validate and login the user 
-   public static void signUp() -> Only the members can be sign Up assuming that Staff are assigned by higher place
+---
 
+### User (inherits `DbHandler`)
+- **Methods**
+  - `public void showBookSearchOptions()` - Shows search options (title, author, genre).
+  - `public void showAllBooks()` - Displays all books.
+  - `public void searchByGenre()` - Filters and displays books by genre.
+  - `public String selectGenre()` - Used to select the genre of a book.
+  - `public void searchByTitle()` - Displays books based on the title given.
+  - `public void searchByTitle(email)` - Same as above but includes email argument.
+  - `public void searchByAuthor()` - Filters and displays books by author.
 
-interface Privileges
+---
 
-   void showPrivileges() -> Display the privileges for member or staff
+### Staff (inherits `User`, implements `Privileges`)
+- **Methods**
+  - `public void showPrivileges()` - Overridden function.
+  - `public void addBooks()` - Adds new books or increases the available copies of existing books.
+  - `public void removeBooks()` - Decreases available copies or removes books entirely.
+  - `public void showAllMembers()` - Displays all members.
+  - `public void showNonAvailableBooks()` - Displays books with `available_copies = 0`.
+  - `public void showMembersAndBorrowedBooks()` - Displays members and their borrowed books.
 
+---
 
-Notifications inherits DbHandler
+### Member (inherits `User`, implements `Privileges`)
+- **Variables**
+  - `private final String email;`
+- **Methods**
+  - Overridden methods:
+    - `public void showPrivileges()`
+    - `public void showAllBooks()`
+    - `public void searchByGenre()` - Displays books with `available_copies > 0`.
+  - `public int showBorrowedBooksCount()` - Shows the count of borrowed books.
+  - `public void borrowBooks()` - Allows borrowing books.
+  - `public void returnBooks()` - Handles book returns.
+  - `public void payFine()` - Facilitates fine payments.
 
-   private static String name;
-   public static void displayWelcomeMsg(email, isStaff) -> Just a welcome Msg
-   public static void displayThankYouMsg() -> Display good bye msg
+---
 
+### Fine (inherits `DbHandler`)
+- **Variables**
+  - `private final String email;`
+- **Methods**
+  - `public static void showFineDetails()` - Displays fine details.
+  - `public void calculateFine(int bookId)` - Calculates fine for a book.
+  - `public void updateFineInDb(int fine)` - Updates fine in the database.
+  - `public int checkIfAlreadyFined()` - Checks if the user is already fined.
+  - `public void updateExistingFine(int fine)` - Updates an existing fine.
+  - `public void createNewFineRecord(int fine)` - Creates a new fine record.
+  - `public void payFine()` - Processes fine payment.
+  - `public void deleteFineAfterPayment()` - Deletes fine record after payment.
+  - `public void updateFineAfterPayment(int fine)` - Updates fine after partial payment.
 
-User inherits DbHandler             //Common methods that can be used by any user either he is an member or staff
+---
 
-   public void showBookSearchOptions() -> Show all the search options(title, author, genre)
-   public void showAllBooks() -> Show all the books
-   public void searchByGenre() -> filter and display the book by genre
-   public String selectGenre() -> Used to select the genre of the book
-   public void searchByTitle() -> show the book based on the title given by the user
-   public void searchByTitle(email) -> same with argument
-   public void searchByAuthor() -> filter and display books based on author
-
-
-Staff inherits User, implements Privileges 
-
-   public void showPrivileges() -> overrided function
-   public void addBooks() -> to add new books or to increase the available copies of the existing book
-   public void removeBooks() -> Decreasing the available_copies or to completely remove an existing book
-   public void showAllMembers()
-   public void showNonAvailableBooks() -> display books whose available_copies is 0
-   public void showMembersAndBorrowedBooks()
-
-
-Member inherits User, implements Privileges
-
-   private final String email;
-   
-   overrided methods
-      public void showPrivileges()
-      public void showAllBooks()
-      public void searchByGenre() -> It will display title, author and genre whose available_copies > 0
-
-   public int showBorrowedBooksCount()
-   public void borrowBooks()
-   public void returnBooks()
-   public void payFine()
-
-
-Fine inherits DbHandler
-
-   private final String email;
-
-   public static void showFineDetails()
-   public void calculateFine(int bookId)
-   public void updateFineInDb(int fine)
-   public int checkIfAlreadyFined()
-   public void updateExistingFine(int fine)
-   public void createNewFineRecord(int fine)
-   public void payFine()
-   public void deleteFineAfterPayment()
-   public void updateFineAfterPayment(int fine)
-
-LibraryService 
-   Main() function
+### LibraryService
+- **Main Method**
+  - The entry point of the application.
