@@ -20,7 +20,9 @@ public class Staff extends User implements Privileges {
         System.out.println("5. Show Non Available Books");
         System.out.println("6. Show All Members");
         System.out.println("7. Show Members and Books Taken By Them");
-        System.out.println("8. Exit\n");
+        System.out.println("8. Show Book Not Returned Users Before Due Date");
+        System.out.println("9. Show Fined Members");
+        System.out.println("10. Exit\n");
     }
 
     public void addBooks() {
@@ -175,7 +177,7 @@ public class Staff extends User implements Privileges {
     }
 
     public void showMembersAndBorrowedBooks() {
-        String fetchQuery = "SELECT members.email, members.name, books.book_id, books.title " +
+        String fetchQuery = "SELECT members.email, members.name, books.book_id, books.title, books_tracker.borrowed_date, books_tracker.due_date " +
                             "FROM members JOIN books_tracker " +
                             "ON members.email = books_tracker.email " +
                             "JOIN books " +
@@ -184,7 +186,7 @@ public class Staff extends User implements Privileges {
             preparedStatement = connection.prepareStatement(fetchQuery);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                System.out.printf("\nEmail = %s, Name = %s, Book Id = %d, Title = %s", resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4));
+                System.out.printf("\nEmail = %s, Name = %s, Book Id = %d, Title = %s, Borrowed date = %s, Due Date = %s", resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getDate(5), resultSet.getDate(6));
             }
             System.out.println();
         }
@@ -192,5 +194,41 @@ public class Staff extends User implements Privileges {
             System.out.println("Kindly check after a while.....");
             System.out.println("Thank you for your understanding!!!");
         }
+    }
+
+    public void showBookNotReturnedMembers() {
+        String fetchQuery = "SELECT books_tracker.email, members.name, books.title, books_tracker.book_id, books_tracker.due_date " +
+                "FROM books_tracker " +
+                "JOIN members ON members.email = books_tracker.email " +
+                "JOIN books ON books.book_id = books_tracker.book_id " +
+                "WHERE CURRENT_DATE > due_date";
+        try {
+            preparedStatement = connection.prepareStatement(fetchQuery);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                System.out.printf("\nEmail = %s, Name = %s, Title = %s, Book Id = %d, Due Date = %s", resultSet.getString(1), resultSet.getString(2), resultSet.getString(3), resultSet.getInt(4), resultSet.getDate(5).toString());
+            }
+            System.out.println();
+        }
+        catch (SQLException e) {
+            System.out.println("Kindly check the members who are all not returned the books");
+        }
+    }
+
+    public void showFinedMembers() {
+        String fetchQuery = "SELECT email, fine FROM fine_tracker;";
+        try {
+            preparedStatement = connection.prepareStatement(fetchQuery);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                System.out.printf("\nEmail = %s, Fine = %d", resultSet.getString(1), resultSet.getInt(2));
+            }
+            System.out.println();
+        }
+        catch (SQLException e) {
+            System.out.println("Unable to see the Fined members...");
+            System.out.println("Please try after a while....");
+        }
+
     }
 }

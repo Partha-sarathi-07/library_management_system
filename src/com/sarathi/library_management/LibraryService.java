@@ -18,7 +18,7 @@ public class LibraryService {
             Staff staff = new Staff();
             outerLoop : while (true) {
                 staff.showPrivileges();
-                System.out.print("Select your option (1 / 2 / 3 / 4 / 5 / 6 / 7 / 8) : ");
+                System.out.print("Select your option (1 / 2 / 3 / 4 / 5 / 6 / 7 / 8 / 9 / 10) : ");
                 int option = scanner.nextInt();
                 scanner.nextLine();
 
@@ -30,6 +30,8 @@ public class LibraryService {
                     case 5 -> staff.showNonAvailableBooks();
                     case 6 -> staff.showAllMembers();
                     case 7 -> staff.showMembersAndBorrowedBooks();
+                    case 8 -> staff.showBookNotReturnedMembers();
+                    case 9 -> staff.showFinedMembers();
                     default ->  {
                         break outerLoop;
                     }
@@ -74,7 +76,7 @@ public class LibraryService {
             if (option == 1) Validation.signUp();
 
             System.out.print("\nEnter your email : ");
-            email = scanner.nextLine();
+            email = scanner.nextLine().toLowerCase();
             System.out.print("Enter your password : ");
             String password = scanner.nextLine();
             System.out.print("Are you an library Staff (yes / no) : ");

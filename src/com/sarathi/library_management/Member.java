@@ -131,7 +131,7 @@ public class Member extends User implements Privileges{
             }
         }
         catch (SQLException e) {
-            System.out.println("hiii");
+            System.out.println("Please borrow the book after a while......");
         }
         System.out.print("Do you want to take another book ?(yes / no) : ");
         if (scanner.nextLine().equalsIgnoreCase("yes"))
@@ -161,7 +161,7 @@ public class Member extends User implements Privileges{
             }
             else {
                 System.out.println("Please enter the correct book_id");
-                    returnBooks();
+                returnBooks();
             }
         }
         catch (SQLException e) {
