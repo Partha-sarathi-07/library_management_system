@@ -122,6 +122,8 @@
   - `public void showAllMembers()` - Displays all members.
   - `public void showNonAvailableBooks()` - Displays books with `available_copies = 0`.
   - `public void showMembersAndBorrowedBooks()` - Displays members and their borrowed books.
+  - `public void showBookNotReturnedMembers()`
+  - `public void showFinedMembers()`
 
 ---
 
